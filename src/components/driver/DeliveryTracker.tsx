@@ -12,13 +12,13 @@ interface DeliveryTrackerProps {
   onDriverPositionChange: (position: [number, number]) => void;
 }
 
-const DeliveryTracker = ({
+function DeliveryTracker({
   restaurantLocation,
   clientLocation,
   deliveryRoute,
   driverPosition,
   onDriverPositionChange,
-}: DeliveryTrackerProps) => {
+}: DeliveryTrackerProps) {
   return (
     <Card className="mb-6">
       <CardHeader>
@@ -53,6 +53,6 @@ const DeliveryTracker = ({
       </CardContent>
     </Card>
   );
-};
+}
 
 export default DeliveryTracker;
