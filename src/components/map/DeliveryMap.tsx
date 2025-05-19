@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L, { LatLngExpression, LatLngTuple } from 'leaflet';
 import MapUpdaterComponent from './MapUpdaterComponent';
@@ -82,7 +82,7 @@ function DeliveryMap({
   }, [currentDriverPosition]);
 
   useEffect(() => {
-    // Simulation of movement for the driver (in real situation, this would be updated by GPS)
+    // Simulation of movement for the driver
     if (routePath && routePath.length >= 2 && !currentDriverPosition) {
       const simulateMovement = () => {
         // Simulate movement along the route

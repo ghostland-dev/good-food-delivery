@@ -65,6 +65,27 @@ function DeliveryTracker({
   const estimatedTime = getEstimatedTime();
   const progressPercentage = getProgressPercentage();
 
+  // Calculate center for the map
+  const getMapCenter = (): LatLngTuple => {
+    let restLat, restLng, clientLat, clientLng;
+    
+    if (Array.isArray(restaurantLocation)) {
+      [restLat, restLng] = restaurantLocation;
+    } else {
+      restLat = restaurantLocation.lat;
+      restLng = restaurantLocation.lng;
+    }
+    
+    if (Array.isArray(clientLocation)) {
+      [clientLat, clientLng] = clientLocation;
+    } else {
+      clientLat = clientLocation.lat;
+      clientLng = clientLocation.lng;
+    }
+    
+    return [(restLat + clientLat) / 2, (restLng + clientLng) / 2] as LatLngTuple;
+  };
+
   return (
     <Card className="mb-6 overflow-hidden">
       <CardHeader className="bg-muted/20 pb-2">
@@ -80,26 +101,7 @@ function DeliveryTracker({
       </CardHeader>
       <CardContent className="p-0">
         <DeliveryMap
-          center={(() => {
-            // Calculate center between restaurant and client
-            let restLat, restLng, clientLat, clientLng;
-            
-            if (Array.isArray(restaurantLocation)) {
-              [restLat, restLng] = restaurantLocation;
-            } else {
-              restLat = restaurantLocation.lat;
-              restLng = restaurantLocation.lng;
-            }
-            
-            if (Array.isArray(clientLocation)) {
-              [clientLat, clientLng] = clientLocation;
-            } else {
-              clientLat = clientLocation.lat;
-              clientLng = clientLocation.lng;
-            }
-            
-            return [(restLat + clientLat) / 2, (restLng + clientLng) / 2] as LatLngTuple;
-          })()}
+          center={getMapCenter()}
           zoom={13}
           height="400px"
           locations={[

@@ -7,7 +7,7 @@ import TestimonialSection from "@/components/TestimonialSection";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import DeliveryMap from "@/components/map/DeliveryMap";
-import { LatLngExpression, LatLngTuple } from "leaflet";
+import { LatLngTuple } from "leaflet";
 
 const Index = () => {
   // Sample data for the map to showcase delivery functionality on homepage
@@ -26,8 +26,8 @@ const Index = () => {
     }
   ];
 
-  // Properly define the route path as an array of LatLngExpression
-  const routePath: LatLngExpression[] = [
+  // Properly define the route path as an array of LatLngTuple
+  const routePath = [
     [48.8566, 2.3522] as LatLngTuple,
     [48.8580, 2.3450] as LatLngTuple,
     [48.8595, 2.3420] as LatLngTuple,
@@ -58,6 +58,7 @@ const Index = () => {
                 routePath={routePath}
                 height="400px"
                 zoom={14}
+                center={[48.8586, 2.3450] as LatLngTuple}
                 className="w-full border border-muted rounded-xl"
               />
             </div>
