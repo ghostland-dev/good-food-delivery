@@ -1,0 +1,22 @@
+
+import { useEffect } from "react";
+import { useMap } from "react-leaflet";
+
+interface MapUpdaterProps {
+  driverPosition: [number, number];
+}
+
+export default function MapUpdaterComponent({ driverPosition }: MapUpdaterProps) {
+  const map = useMap();
+  
+  useEffect(() => {
+    if (driverPosition) {
+      map.setView(driverPosition, map.getZoom(), {
+        animate: true,
+        duration: 1
+      });
+    }
+  }, [driverPosition, map]);
+  
+  return null;
+}

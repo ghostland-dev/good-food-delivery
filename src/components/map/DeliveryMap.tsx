@@ -1,9 +1,10 @@
 
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { LatLngExpression } from 'leaflet';
+import MapUpdaterComponent from './MapUpdaterComponent';
 
 // Correction des icônes Leaflet qui ne se chargent pas correctement dans React
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -58,22 +59,6 @@ interface DeliveryMapProps {
   showRoute?: boolean;
   currentDriverPosition?: [number, number];
   onDriverPositionChange?: (position: [number, number]) => void;
-}
-
-// This component handles map updates that require access to the Leaflet map instance
-function MapUpdater({ driverPosition }: { driverPosition: [number, number] }) {
-  const map = useMap();
-  
-  useEffect(() => {
-    if (driverPosition) {
-      map.setView(driverPosition, map.getZoom(), {
-        animate: true,
-        duration: 1
-      });
-    }
-  }, [driverPosition, map]);
-  
-  return null;
 }
 
 function DeliveryMap({
@@ -178,7 +163,7 @@ function DeliveryMap({
           />
         )}
         
-        <MapUpdater driverPosition={driverPosition} />
+        <MapUpdaterComponent driverPosition={driverPosition} />
       </MapContainer>
     </div>
   );
