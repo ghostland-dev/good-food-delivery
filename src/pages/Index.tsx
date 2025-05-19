@@ -42,8 +42,8 @@ const Index = () => {
         <CategorySection />
         <RestaurantSection />
         
-        {/* Showcase map feature */}
-        <section className="bg-muted/30 py-16">
+        {/* Showcase map feature with improved visuals */}
+        <section className="bg-gradient-to-b from-muted/30 to-background py-16">
           <div className="container mx-auto px-4">
             <div className="text-center mb-10">
               <h2 className="text-3xl font-bold mb-4">Suivez vos livraisons en temps réel</h2>
@@ -52,13 +52,19 @@ const Index = () => {
                 en temps réel, de la cuisine jusqu'à votre porte.
               </p>
             </div>
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-4xl mx-auto rounded-xl overflow-hidden shadow-lg">
               <DeliveryMap 
                 locations={locations}
                 routePath={routePath}
                 height="400px"
                 zoom={14}
+                className="w-full border border-muted rounded-xl"
               />
+            </div>
+            <div className="text-center mt-6">
+              <p className="text-sm text-muted-foreground">
+                Utilisez notre application mobile pour profiter pleinement du suivi GPS.
+              </p>
             </div>
           </div>
         </section>

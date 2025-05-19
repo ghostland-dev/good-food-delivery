@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { LatLngExpression } from 'leaflet';
@@ -88,12 +88,16 @@ function DeliveryMap({
       const simulateMovement = () => {
         // On simule un déplacement le long de la route
         const randomPoint = Math.floor(Math.random() * (routePath.length - 1));
-        const point = routePath[randomPoint] as [number, number];
+        // Ensure the point is a tuple of two numbers
+        const point = routePath[randomPoint];
+        const position: [number, number] = Array.isArray(point) 
+          ? [point[0], point[1]] 
+          : [point.lat, point.lng];
         
-        setDriverPosition(point);
+        setDriverPosition(position);
         
         if (onDriverPositionChange) {
-          onDriverPositionChange(point);
+          onDriverPositionChange(position);
         }
       };
 
@@ -163,6 +167,7 @@ function DeliveryMap({
           />
         )}
         
+        {/* Using updated MapUpdaterComponent */}
         <MapUpdaterComponent driverPosition={driverPosition} />
       </MapContainer>
     </div>
