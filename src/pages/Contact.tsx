@@ -17,6 +17,7 @@ import {
   Briefcase 
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import DeliveryMap from "@/components/map/DeliveryMap";
 
 const Contact = () => {
   const { toast } = useToast();
@@ -54,6 +55,17 @@ const Contact = () => {
       setIsSubmitting(false);
     }, 1500);
   };
+
+  // Location data for the map
+  const officeLocation: [number, number] = [48.8731, 2.3003]; // Office in Paris
+  const mapLocations = [
+    {
+      name: "Siège GoodFood",
+      position: officeLocation,
+      type: "restaurant" as const,
+      description: "123 Avenue des Champs-Élysées, 75008 Paris"
+    }
+  ];
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -135,11 +147,14 @@ const Contact = () => {
                 </div>
 
                 {/* Map */}
-                <div className="mt-8 rounded-xl overflow-hidden h-[300px] bg-gray-100 flex items-center justify-center">
-                  <p className="text-gray-500 text-center p-4">
-                    Carte interactive<br />
-                    (Intégration Google Maps)
-                  </p>
+                <div className="mt-8 rounded-xl overflow-hidden h-[300px]">
+                  <DeliveryMap
+                    center={officeLocation}
+                    zoom={14}
+                    locations={mapLocations}
+                    height="300px"
+                    showRoute={false}
+                  />
                 </div>
               </div>
 

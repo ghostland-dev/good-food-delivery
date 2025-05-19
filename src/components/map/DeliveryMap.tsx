@@ -61,15 +61,9 @@ interface DeliveryMapProps {
 }
 
 // This component handles map updates that require access to the Leaflet map instance
-// It's a separate component to properly use the map context
-const MapUpdater = ({ 
-  driverPosition 
-}: { 
-  driverPosition: [number, number] 
-}) => {
+const MapUpdater: React.FC<{ driverPosition: [number, number] }> = ({ driverPosition }) => {
   const map = useMap();
   
-  // Effect to animate map to follow driver
   useEffect(() => {
     if (driverPosition) {
       map.setView(driverPosition, map.getZoom(), {
@@ -82,7 +76,7 @@ const MapUpdater = ({
   return null;
 };
 
-const DeliveryMap = ({
+const DeliveryMap: React.FC<DeliveryMapProps> = ({
   center = [48.8566, 2.3522], // Paris par défaut
   zoom = 13,
   locations,
@@ -92,7 +86,7 @@ const DeliveryMap = ({
   showRoute = true,
   currentDriverPosition,
   onDriverPositionChange
-}: DeliveryMapProps) => {
+}) => {
   const [driverPosition, setDriverPosition] = useState<[number, number]>(
     currentDriverPosition || [48.8566, 2.3522]
   );
@@ -184,7 +178,6 @@ const DeliveryMap = ({
           />
         )}
         
-        {/* Simple MapUpdater component that only takes the driver position */}
         <MapUpdater driverPosition={driverPosition} />
       </MapContainer>
     </div>
