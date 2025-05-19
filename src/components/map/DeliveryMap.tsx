@@ -1,12 +1,11 @@
 
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import L, { LatLngExpression } from 'leaflet';
+import L, { LatLngExpression, LatLngTuple } from 'leaflet';
 import MapUpdaterComponent from './MapUpdaterComponent';
 
 // Fix Leaflet icon issues in React
-// This must be done before using any icons
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
@@ -62,7 +61,7 @@ interface DeliveryMapProps {
 }
 
 function DeliveryMap({
-  center = [48.8566, 2.3522], // Paris by default
+  center = [48.8566, 2.3522] as LatLngTuple, // Paris by default
   zoom = 13,
   locations,
   routePath,
@@ -73,7 +72,7 @@ function DeliveryMap({
   onDriverPositionChange
 }: DeliveryMapProps) {
   const [driverPosition, setDriverPosition] = useState<LatLngExpression>(
-    currentDriverPosition || [48.8566, 2.3522]
+    currentDriverPosition || ([48.8566, 2.3522] as LatLngTuple)
   );
 
   useEffect(() => {

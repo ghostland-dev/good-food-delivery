@@ -1,18 +1,18 @@
 
 import { useState } from "react";
-import { LatLngExpression } from "leaflet";
+import { LatLngExpression, LatLngTuple } from "leaflet";
 import { toast } from "@/components/ui/use-toast";
 
 // Constants for demonstration
-const RESTAURANT_LOCATION: LatLngExpression = [48.8738, 2.3596]; // Restaurant Burger House in Paris
-const CLIENT_LOCATION: LatLngExpression = [48.8584, 2.2945]; // Client in Paris
+const RESTAURANT_LOCATION: LatLngTuple = [48.8738, 2.3596]; // Restaurant Burger House in Paris
+const CLIENT_LOCATION: LatLngTuple = [48.8584, 2.2945]; // Client in Paris
 
 // Simulated delivery route
 const DELIVERY_ROUTE: LatLngExpression[] = [
   RESTAURANT_LOCATION,
-  [48.8689, 2.3423],
-  [48.8656, 2.3212],
-  [48.8619, 2.3079],
+  [48.8689, 2.3423] as LatLngTuple,
+  [48.8656, 2.3212] as LatLngTuple,
+  [48.8619, 2.3079] as LatLngTuple,
   CLIENT_LOCATION
 ];
 

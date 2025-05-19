@@ -2,7 +2,7 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import DeliveryMap from "@/components/map/DeliveryMap";
-import { LatLngExpression } from "leaflet";
+import { LatLngExpression, LatLngTuple } from "leaflet";
 import { Badge } from "@/components/ui/badge";
 import { Navigation } from "lucide-react";
 
@@ -80,12 +80,26 @@ function DeliveryTracker({
       </CardHeader>
       <CardContent className="p-0">
         <DeliveryMap
-          center={[
-            (Array.isArray(restaurantLocation) ? restaurantLocation[0] : restaurantLocation.lat) +
-            (Array.isArray(clientLocation) ? clientLocation[0] : clientLocation.lat) / 2,
-            (Array.isArray(restaurantLocation) ? restaurantLocation[1] : restaurantLocation.lng) +
-            (Array.isArray(clientLocation) ? clientLocation[1] : clientLocation.lng) / 2
-          ]}
+          center={(() => {
+            // Calculate center between restaurant and client
+            let restLat, restLng, clientLat, clientLng;
+            
+            if (Array.isArray(restaurantLocation)) {
+              [restLat, restLng] = restaurantLocation;
+            } else {
+              restLat = restaurantLocation.lat;
+              restLng = restaurantLocation.lng;
+            }
+            
+            if (Array.isArray(clientLocation)) {
+              [clientLat, clientLng] = clientLocation;
+            } else {
+              clientLat = clientLocation.lat;
+              clientLng = clientLocation.lng;
+            }
+            
+            return [(restLat + clientLat) / 2, (restLng + clientLng) / 2] as LatLngTuple;
+          })()}
           zoom={13}
           height="400px"
           locations={[
