@@ -61,14 +61,11 @@ interface DeliveryMapProps {
 }
 
 // This component handles map updates that require access to the Leaflet map instance
+// It's a separate component to properly use the map context
 const MapUpdater = ({ 
-  driverPosition, 
-  routePath, 
-  showRoute 
+  driverPosition 
 }: { 
-  driverPosition: [number, number],
-  routePath?: LatLngExpression[],
-  showRoute?: boolean
+  driverPosition: [number, number] 
 }) => {
   const map = useMap();
   
@@ -187,12 +184,8 @@ const DeliveryMap = ({
           />
         )}
         
-        {/* Map updater component to handle map instance operations */}
-        <MapUpdater 
-          driverPosition={driverPosition}
-          routePath={routePath}
-          showRoute={showRoute}
-        />
+        {/* Simple MapUpdater component that only takes the driver position */}
+        <MapUpdater driverPosition={driverPosition} />
       </MapContainer>
     </div>
   );
