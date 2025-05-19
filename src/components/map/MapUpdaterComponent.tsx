@@ -6,7 +6,7 @@ interface MapUpdaterProps {
   driverPosition: [number, number];
 }
 
-export default function MapUpdaterComponent({ driverPosition }: MapUpdaterProps) {
+const MapUpdaterComponent = ({ driverPosition }: MapUpdaterProps) => {
   const map = useMap();
   
   useEffect(() => {
@@ -19,4 +19,6 @@ export default function MapUpdaterComponent({ driverPosition }: MapUpdaterProps)
   }, [driverPosition, map]);
   
   return null;
-}
+};
+
+export default MapUpdaterComponent;
