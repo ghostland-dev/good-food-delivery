@@ -3,15 +3,14 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import DeliveryMap from "@/components/map/DeliveryMap";
 import { LatLngExpression } from "leaflet";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Navigation } from "lucide-react";
 
 interface DeliveryTrackerProps {
-  restaurantLocation: [number, number];
-  clientLocation: [number, number];
+  restaurantLocation: LatLngExpression;
+  clientLocation: LatLngExpression;
   deliveryRoute: LatLngExpression[];
-  driverPosition: [number, number];
+  driverPosition: LatLngExpression;
   onDriverPositionChange: (position: [number, number]) => void;
 }
 
@@ -30,14 +29,19 @@ function DeliveryTracker({
     let closestIndex = 0;
     let closestDistance = Infinity;
     
+    // Convert driverPosition to array format for calculation
+    const driverPos = Array.isArray(driverPosition) 
+      ? driverPosition 
+      : [driverPosition.lat, driverPosition.lng];
+      
     deliveryRoute.forEach((point, index) => {
       const pointArr = Array.isArray(point) 
         ? [point[0], point[1]] 
         : [point.lat, point.lng];
         
       const distance = Math.sqrt(
-        Math.pow(pointArr[0] - driverPosition[0], 2) + 
-        Math.pow(pointArr[1] - driverPosition[1], 2)
+        Math.pow(pointArr[0] - driverPos[0], 2) + 
+        Math.pow(pointArr[1] - driverPos[1], 2)
       );
       
       if (distance < closestDistance) {
@@ -77,8 +81,10 @@ function DeliveryTracker({
       <CardContent className="p-0">
         <DeliveryMap
           center={[
-            (restaurantLocation[0] + clientLocation[0]) / 2,
-            (restaurantLocation[1] + clientLocation[1]) / 2
+            (Array.isArray(restaurantLocation) ? restaurantLocation[0] : restaurantLocation.lat) +
+            (Array.isArray(clientLocation) ? clientLocation[0] : clientLocation.lat) / 2,
+            (Array.isArray(restaurantLocation) ? restaurantLocation[1] : restaurantLocation.lng) +
+            (Array.isArray(clientLocation) ? clientLocation[1] : clientLocation.lng) / 2
           ]}
           zoom={13}
           height="400px"

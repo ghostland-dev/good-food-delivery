@@ -14,13 +14,13 @@ const Index = () => {
   const locations = [
     {
       name: "GoodFood HQ",
-      position: [48.8566, 2.3522] as [number, number],
+      position: [48.8566, 2.3522] as LatLngExpression,
       type: "restaurant" as const,
       description: "Notre siège social"
     },
     {
       name: "Livraison en cours",
-      position: [48.8606, 2.3376] as [number, number],
+      position: [48.8606, 2.3376] as LatLngExpression,
       type: "client" as const,
       description: "Livraison prévue dans 10 minutes"
     }
@@ -28,10 +28,10 @@ const Index = () => {
 
   // Properly define the route path as an array of LatLngExpression
   const routePath: LatLngExpression[] = [
-    [48.8566, 2.3522] as [number, number],
-    [48.8580, 2.3450] as [number, number],
-    [48.8595, 2.3420] as [number, number],
-    [48.8606, 2.3376] as [number, number]
+    [48.8566, 2.3522],
+    [48.8580, 2.3450],
+    [48.8595, 2.3420],
+    [48.8606, 2.3376]
   ];
 
   return (
