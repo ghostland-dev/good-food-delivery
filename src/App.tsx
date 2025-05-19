@@ -14,6 +14,16 @@ import FAQ from "./pages/FAQ";
 import Contact from "./pages/Contact";
 import UserAccount from "./pages/UserAccount";
 import NotFound from "./pages/NotFound";
+import Signup from "./pages/Signup";
+import FranchiseHome from "./pages/franchise/FranchiseHome";
+import FranchiseOrders from "./pages/franchise/FranchiseOrders";
+import FranchiseMenu from "./pages/franchise/FranchiseMenu";
+import FranchiseAnalytics from "./pages/franchise/FranchiseAnalytics";
+import FranchiseSettings from "./pages/franchise/FranchiseSettings";
+import DriverHome from "./pages/driver/DriverHome";
+import DriverOrders from "./pages/driver/DriverOrders";
+import DriverProfile from "./pages/driver/DriverProfile";
+import DriverEarnings from "./pages/driver/DriverEarnings";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +36,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
           <Route path="/restaurants" element={<RestaurantsPage />} />
           <Route path="/restaurant/:id" element={<RestaurantDetail />} />
           <Route path="/categories" element={<CategoriesPage />} />
@@ -34,6 +45,20 @@ const App = () => (
           <Route path="/faq" element={<FAQ />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/account" element={<UserAccount />} />
+          
+          {/* Franchise Routes */}
+          <Route path="/franchise" element={<FranchiseHome />} />
+          <Route path="/franchise/orders" element={<FranchiseOrders />} />
+          <Route path="/franchise/menu" element={<FranchiseMenu />} />
+          <Route path="/franchise/analytics" element={<FranchiseAnalytics />} />
+          <Route path="/franchise/settings" element={<FranchiseSettings />} />
+          
+          {/* Driver Routes */}
+          <Route path="/driver" element={<DriverHome />} />
+          <Route path="/driver/orders" element={<DriverOrders />} />
+          <Route path="/driver/profile" element={<DriverProfile />} />
+          <Route path="/driver/earnings" element={<DriverEarnings />} />
+          
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
