@@ -24,6 +24,7 @@ import DriverHome from "./pages/driver/DriverHome";
 import DriverOrders from "./pages/driver/DriverOrders";
 import DriverProfile from "./pages/driver/DriverProfile";
 import DriverEarnings from "./pages/driver/DriverEarnings";
+import Cart from "./pages/Cart";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +46,7 @@ const App = () => (
           <Route path="/faq" element={<FAQ />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/account" element={<UserAccount />} />
+          <Route path="/cart" element={<Cart />} />
           
           {/* Franchise Routes */}
           <Route path="/franchise" element={<FranchiseHome />} />
