@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { LatLngExpression } from 'leaflet';
@@ -59,6 +59,31 @@ interface DeliveryMapProps {
   currentDriverPosition?: [number, number];
   onDriverPositionChange?: (position: [number, number]) => void;
 }
+
+// This component handles map updates that require access to the Leaflet map instance
+const MapUpdater = ({ 
+  driverPosition, 
+  routePath, 
+  showRoute 
+}: { 
+  driverPosition: [number, number],
+  routePath?: LatLngExpression[],
+  showRoute?: boolean
+}) => {
+  const map = useMap();
+  
+  // Effect to animate map to follow driver
+  useEffect(() => {
+    if (driverPosition) {
+      map.setView(driverPosition, map.getZoom(), {
+        animate: true,
+        duration: 1
+      });
+    }
+  }, [driverPosition, map]);
+  
+  return null;
+};
 
 const DeliveryMap = ({
   center = [48.8566, 2.3522], // Paris par défaut
@@ -161,6 +186,13 @@ const DeliveryMap = ({
             dashArray="10, 10"
           />
         )}
+        
+        {/* Map updater component to handle map instance operations */}
+        <MapUpdater 
+          driverPosition={driverPosition}
+          routePath={routePath}
+          showRoute={showRoute}
+        />
       </MapContainer>
     </div>
   );
