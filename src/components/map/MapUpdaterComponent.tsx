@@ -6,7 +6,7 @@ interface MapUpdaterProps {
   driverPosition: [number, number];
 }
 
-const MapUpdaterComponent: React.FC<MapUpdaterProps> = ({ driverPosition }) => {
+const MapUpdaterComponent = ({ driverPosition }: MapUpdaterProps) => {
   const map = useMap();
   
   useEffect(() => {
