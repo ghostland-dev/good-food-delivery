@@ -1,15 +1,32 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DriverHeader from "@/components/driver/DriverHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "@/components/ui/use-toast";
 import { MapPin, Navigation, Package } from "lucide-react";
+import DeliveryMap from "@/components/map/DeliveryMap";
+import { LatLngExpression } from "leaflet";
+
+// Données de démonstration pour la carte
+const restaurantLocation: [number, number] = [48.8738, 2.3596]; // Restaurant Burger House à Paris
+const clientLocation: [number, number] = [48.8584, 2.2945]; // Client à Paris
+
+// Route de livraison simulée
+const deliveryRoute: LatLngExpression[] = [
+  restaurantLocation,
+  [48.8689, 2.3423],
+  [48.8656, 2.3212],
+  [48.8619, 2.3079],
+  clientLocation
+];
 
 const DriverHome = () => {
   const [isAvailable, setIsAvailable] = useState(true);
   const [hasCurrentDelivery, setHasCurrentDelivery] = useState(false);
+  const [driverPosition, setDriverPosition] = useState<[number, number]>(restaurantLocation);
+  const [showMap, setShowMap] = useState(false);
   
   const toggleAvailability = () => {
     const newStatus = !isAvailable;
@@ -22,6 +39,7 @@ const DriverHome = () => {
   
   const acceptDelivery = () => {
     setHasCurrentDelivery(true);
+    setShowMap(true);
     toast({
       title: "Livraison acceptée",
       description: "Vous avez accepté la livraison pour Restaurant Burger House"
@@ -30,10 +48,25 @@ const DriverHome = () => {
   
   const completeDelivery = () => {
     setHasCurrentDelivery(false);
+    setShowMap(false);
     toast({
       title: "Livraison terminée",
       description: "Vous avez terminé la livraison avec succès."
     });
+  };
+
+  const handleDriverPositionChange = (position: [number, number]) => {
+    setDriverPosition(position);
+  };
+
+  const toggleNavigate = () => {
+    setShowMap(!showMap);
+    if (!showMap) {
+      toast({
+        title: "Navigation activée",
+        description: "Suivez votre itinéraire sur la carte"
+      });
+    }
   };
 
   return (
@@ -54,6 +87,41 @@ const DriverHome = () => {
             <Switch checked={isAvailable} onCheckedChange={toggleAvailability} />
           </div>
         </div>
+
+        {showMap && hasCurrentDelivery && (
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle>Suivi de trajet en temps réel</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <DeliveryMap
+                center={[48.8566, 2.3522]} // Paris
+                zoom={12}
+                height="400px"
+                locations={[
+                  { name: "Restaurant Burger House", position: restaurantLocation, type: "restaurant", description: "12 Avenue des Champs-Élysées, 75008 Paris" },
+                  { name: "Marie Dupont", position: clientLocation, type: "client", description: "24 Rue du Commerce, 75015 Paris" }
+                ]}
+                routePath={deliveryRoute}
+                currentDriverPosition={driverPosition}
+                onDriverPositionChange={handleDriverPositionChange}
+              />
+              <div className="mt-4 text-sm">
+                <p className="font-medium">Progression de livraison:</p>
+                <div className="w-full bg-muted h-2 rounded-full mt-2">
+                  <div
+                    className="bg-primary h-2 rounded-full"
+                    style={{ width: `${Math.min(100, (deliveryRoute.indexOf(driverPosition as any) / (deliveryRoute.length - 1)) * 100) || 10}%` }}
+                  />
+                </div>
+                <div className="flex justify-between mt-1">
+                  <span>Restaurant</span>
+                  <span>Client</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
         
         {isAvailable && !hasCurrentDelivery && (
           <div className="grid md:grid-cols-2 gap-6">
@@ -184,10 +252,11 @@ const DriverHome = () => {
                 </Button>
                 <Button 
                   className="w-auto" 
-                  variant="outline"
+                  variant={showMap ? "secondary" : "outline"}
+                  onClick={toggleNavigate}
                 >
                   <Navigation className="h-4 w-4 mr-2" />
-                  Naviguer
+                  {showMap ? "Masquer" : "Naviguer"}
                 </Button>
               </div>
             </CardContent>
