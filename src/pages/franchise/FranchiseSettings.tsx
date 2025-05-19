@@ -1,191 +1,217 @@
 
-import React from 'react';
-import FranchiseSidebar from '@/components/franchise/FranchiseSidebar';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Switch } from '@/components/ui/switch';
+import React, { useState } from 'react';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Switch } from "@/components/ui/switch";
+import { Separator } from "@/components/ui/separator";
+import { toast } from "@/hooks/use-toast";
+import FranchiseSidebar from "@/components/franchise/FranchiseSidebar";
 
 const FranchiseSettings = () => {
+  const [restaurantInfo, setRestaurantInfo] = useState({
+    name: "Burger Palace",
+    address: "123 Rue de la Paix, Paris",
+    phone: "01 23 45 67 89",
+    email: "contact@burgerpalace.fr",
+  });
+
+  const [notifications, setNotifications] = useState({
+    orderNotifications: true,
+    marketingEmails: false,
+    customerReviews: true,
+    appUpdates: true,
+  });
+
+  const handleRestaurantInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setRestaurantInfo({
+      ...restaurantInfo,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleNotificationChange = (key: keyof typeof notifications) => {
+    setNotifications({
+      ...notifications,
+      [key]: !notifications[key]
+    });
+  };
+
+  const handleSaveRestaurantInfo = () => {
+    toast({
+      title: "Profil mis à jour",
+      description: "Les informations de votre restaurant ont été mises à jour."
+    });
+  };
+
+  const handleSaveNotifications = () => {
+    toast({
+      title: "Préférences sauvegardées",
+      description: "Vos préférences de notification ont été mises à jour."
+    });
+  };
+
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row">
+    <div className="flex min-h-screen bg-background">
       <FranchiseSidebar />
-      
-      <div className="flex-1 p-4 lg:p-8 lg:ml-56">
+      <div className="flex-1 p-8">
         <h1 className="text-3xl font-bold mb-6">Paramètres</h1>
         
-        <Tabs defaultValue="profile">
+        <Tabs defaultValue="profile" className="w-full">
           <TabsList className="mb-6">
-            <TabsTrigger value="profile">Profil du restaurant</TabsTrigger>
+            <TabsTrigger value="profile">Profil Restaurant</TabsTrigger>
             <TabsTrigger value="notifications">Notifications</TabsTrigger>
-            <TabsTrigger value="hours">Horaires d'ouverture</TabsTrigger>
-            <TabsTrigger value="delivery">Livraison</TabsTrigger>
+            <TabsTrigger value="payment">Paiements</TabsTrigger>
+            <TabsTrigger value="security">Sécurité</TabsTrigger>
           </TabsList>
           
           <TabsContent value="profile">
             <Card>
               <CardHeader>
-                <CardTitle>Informations du restaurant</CardTitle>
+                <CardTitle>Informations du Restaurant</CardTitle>
+                <CardDescription>
+                  Mettez à jour les informations de votre restaurant qui seront visibles pour les clients.
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="restaurantName">Nom du restaurant</Label>
-                    <Input id="restaurantName" defaultValue="Restaurant Demo" />
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="name">Nom du restaurant</Label>
+                  <Input 
+                    id="name" 
+                    name="name"
+                    value={restaurantInfo.name}
+                    onChange={handleRestaurantInfoChange}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="address">Adresse</Label>
+                  <Input 
+                    id="address" 
+                    name="address"
+                    value={restaurantInfo.address}
+                    onChange={handleRestaurantInfoChange}
+                  />
+                </div>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="phone">Téléphone</Label>
-                    <Input id="phone" defaultValue="+33 1 23 45 67 89" type="tel" />
+                    <Input 
+                      id="phone" 
+                      name="phone"
+                      value={restaurantInfo.phone}
+                      onChange={handleRestaurantInfoChange}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
-                    <Input id="email" defaultValue="contact@restaurant-demo.com" type="email" />
+                    <Input 
+                      id="email" 
+                      name="email"
+                      value={restaurantInfo.email}
+                      onChange={handleRestaurantInfoChange}
+                    />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="website">Site web</Label>
-                    <Input id="website" defaultValue="https://restaurant-demo.com" />
-                  </div>
                 </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="address">Adresse</Label>
-                  <Input id="address" defaultValue="123 Rue du Commerce, 75015 Paris" />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
-                  <textarea 
-                    id="description" 
-                    className="w-full min-h-[100px] p-2 border rounded-md"
-                    defaultValue="Restaurant traditionnel proposant une cuisine française authentique avec des produits frais et locaux." 
-                  />
-                </div>
-                
-                <Button className="bg-primary hover:bg-primary/90">Sauvegarder</Button>
               </CardContent>
+              <CardFooter>
+                <Button onClick={handleSaveRestaurantInfo}>
+                  Enregistrer les modifications
+                </Button>
+              </CardFooter>
             </Card>
           </TabsContent>
           
           <TabsContent value="notifications">
             <Card>
               <CardHeader>
-                <CardTitle>Préférences de notifications</CardTitle>
+                <CardTitle>Préférences de notification</CardTitle>
+                <CardDescription>
+                  Configurez vos préférences de notification pour rester informé des activités importantes.
+                </CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium">Nouvelles commandes</p>
-                      <p className="text-sm text-muted-foreground">Recevoir des notifications pour chaque nouvelle commande</p>
-                    </div>
-                    <Switch defaultChecked />
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">Notifications de commande</p>
+                    <p className="text-sm text-muted-foreground">Recevez des alertes lors de nouvelles commandes</p>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium">Commandes annulées</p>
-                      <p className="text-sm text-muted-foreground">Recevoir des notifications lorsqu'une commande est annulée</p>
-                    </div>
-                    <Switch defaultChecked />
+                  <Switch 
+                    checked={notifications.orderNotifications}
+                    onCheckedChange={() => handleNotificationChange('orderNotifications')}
+                  />
+                </div>
+                <Separator />
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">Emails marketing</p>
+                    <p className="text-sm text-muted-foreground">Recevez des informations sur nos promotions</p>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium">Livraisons</p>
-                      <p className="text-sm text-muted-foreground">Recevoir des notifications sur les mises à jour de livraison</p>
-                    </div>
-                    <Switch />
+                  <Switch 
+                    checked={notifications.marketingEmails}
+                    onCheckedChange={() => handleNotificationChange('marketingEmails')}
+                  />
+                </div>
+                <Separator />
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">Avis clients</p>
+                    <p className="text-sm text-muted-foreground">Soyez notifié des nouveaux avis clients</p>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium">Rapports quotidiens</p>
-                      <p className="text-sm text-muted-foreground">Recevoir un résumé quotidien des performances</p>
-                    </div>
-                    <Switch defaultChecked />
+                  <Switch 
+                    checked={notifications.customerReviews}
+                    onCheckedChange={() => handleNotificationChange('customerReviews')}
+                  />
+                </div>
+                <Separator />
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">Mises à jour de l'application</p>
+                    <p className="text-sm text-muted-foreground">Soyez informé des nouvelles fonctionnalités</p>
                   </div>
+                  <Switch 
+                    checked={notifications.appUpdates}
+                    onCheckedChange={() => handleNotificationChange('appUpdates')}
+                  />
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button onClick={handleSaveNotifications}>
+                  Enregistrer les préférences
+                </Button>
+              </CardFooter>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="payment">
+            <Card>
+              <CardHeader>
+                <CardTitle>Informations de paiement</CardTitle>
+                <CardDescription>
+                  Gérez vos méthodes de paiement et vos informations bancaires.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-center h-40">
+                  <p className="text-muted-foreground">Paramètres de paiement à implémenter</p>
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
           
-          <TabsContent value="hours">
+          <TabsContent value="security">
             <Card>
               <CardHeader>
-                <CardTitle>Horaires d'ouverture</CardTitle>
+                <CardTitle>Sécurité du compte</CardTitle>
+                <CardDescription>
+                  Gérez les paramètres de sécurité de votre compte.
+                </CardDescription>
               </CardHeader>
-              <CardContent>
-                {["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"].map((day, index) => (
-                  <div key={day} className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 pb-4 border-b last:border-0">
-                    <div className="flex items-center">
-                      <div className="mr-4">
-                        <Switch defaultChecked={index < 6} id={`open-${day}`} />
-                      </div>
-                      <Label htmlFor={`open-${day}`}>{day}</Label>
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Ouverture</Label>
-                      <Input type="time" defaultValue="11:30" disabled={index === 6} />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Fermeture</Label>
-                      <Input type="time" defaultValue="22:30" disabled={index === 6} />
-                    </div>
-                  </div>
-                ))}
-                
-                <Button className="mt-4 bg-primary hover:bg-primary/90">Sauvegarder</Button>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="delivery">
-            <Card>
-              <CardHeader>
-                <CardTitle>Options de livraison</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium">Livraison à domicile</p>
-                      <p className="text-sm text-muted-foreground">Proposer la livraison à domicile</p>
-                    </div>
-                    <Switch defaultChecked />
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium">À emporter</p>
-                      <p className="text-sm text-muted-foreground">Proposer le service à emporter</p>
-                    </div>
-                    <Switch defaultChecked />
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium">Sur place</p>
-                      <p className="text-sm text-muted-foreground">Proposer la restauration sur place</p>
-                    </div>
-                    <Switch defaultChecked />
-                  </div>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-center h-40">
+                  <p className="text-muted-foreground">Paramètres de sécurité à implémenter</p>
                 </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="deliveryRadius">Rayon de livraison (km)</Label>
-                  <Input id="deliveryRadius" type="number" defaultValue="5" min="1" max="20" />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="minOrderAmount">Montant minimum de commande (€)</Label>
-                  <Input id="minOrderAmount" type="number" defaultValue="15" min="0" step="0.5" />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="deliveryFee">Frais de livraison (€)</Label>
-                  <Input id="deliveryFee" type="number" defaultValue="2.50" min="0" step="0.5" />
-                </div>
-                
-                <Button className="bg-primary hover:bg-primary/90">Sauvegarder</Button>
               </CardContent>
             </Card>
           </TabsContent>

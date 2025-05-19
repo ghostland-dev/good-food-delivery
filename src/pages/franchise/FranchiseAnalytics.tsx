@@ -1,137 +1,97 @@
 
 import React from 'react';
-import FranchiseSidebar from '@/components/franchise/FranchiseSidebar';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
-  AreaChart, 
-  Area, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  Legend
-} from 'recharts';
-
-// Sample data for charts
-const salesData = [
-  { name: 'Jan', value: 4000 },
-  { name: 'Feb', value: 3000 },
-  { name: 'Mar', value: 2000 },
-  { name: 'Apr', value: 2780 },
-  { name: 'May', value: 1890 },
-  { name: 'Jun', value: 2390 },
-  { name: 'Jul', value: 3490 },
-];
-
-const ordersByType = [
-  { name: 'Livraison', value: 400 },
-  { name: 'A emporter', value: 300 },
-  { name: 'Sur place', value: 200 },
-];
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import FranchiseSidebar from "@/components/franchise/FranchiseSidebar";
 
 const FranchiseAnalytics = () => {
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row">
+    <div className="flex min-h-screen bg-background">
       <FranchiseSidebar />
-      
-      <div className="flex-1 p-4 lg:p-8 lg:ml-56">
-        <h1 className="text-3xl font-bold mb-6">Analyses</h1>
+      <div className="flex-1 p-8">
+        <h1 className="text-3xl font-bold mb-6">Analytiques</h1>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Sales chart */}
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           <Card>
-            <CardHeader>
-              <CardTitle>Chiffre d'affaires mensuel</CardTitle>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">Revenu Total</CardTitle>
             </CardHeader>
-            <CardContent className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart
-                  data={salesData}
-                  margin={{
-                    top: 10,
-                    right: 30,
-                    left: 0,
-                    bottom: 0,
-                  }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Area type="monotone" dataKey="value" stroke="#fb923c" fill="#fed7aa" />
-                </AreaChart>
-              </ResponsiveContainer>
+            <CardContent>
+              <div className="text-2xl font-bold">€4,532.89</div>
+              <p className="text-xs text-muted-foreground mt-1">+12.5% du mois dernier</p>
             </CardContent>
           </Card>
           
-          {/* Orders by type */}
           <Card>
-            <CardHeader>
-              <CardTitle>Commandes par type</CardTitle>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">Commandes</CardTitle>
             </CardHeader>
-            <CardContent className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={ordersByType}
-                  margin={{
-                    top: 20,
-                    right: 30,
-                    left: 20,
-                    bottom: 5,
-                  }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="value" name="Nombre de commandes" fill="#fb923c" />
-                </BarChart>
-              </ResponsiveContainer>
+            <CardContent>
+              <div className="text-2xl font-bold">324</div>
+              <p className="text-xs text-muted-foreground mt-1">+5.2% du mois dernier</p>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">Clients</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">156</div>
+              <p className="text-xs text-muted-foreground mt-1">+18.3% du mois dernier</p>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">Satisfaction</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">4.8/5</div>
+              <p className="text-xs text-muted-foreground mt-1">+0.2 du mois dernier</p>
             </CardContent>
           </Card>
         </div>
         
-        <div className="mt-6">
-          <Card>
+        <div className="grid grid-cols-1 gap-6 mt-6 lg:grid-cols-2">
+          <Card className="col-span-1">
             <CardHeader>
-              <CardTitle>Performance des produits</CardTitle>
+              <CardTitle>Ventes Mensuelles</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b">
-                      <th className="text-left py-3 px-4">Produit</th>
-                      <th className="text-left py-3 px-4">Commandes</th>
-                      <th className="text-left py-3 px-4">Revenu</th>
-                      <th className="text-left py-3 px-4">Évaluation</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr className="border-b hover:bg-muted/50">
-                      <td className="py-3 px-4">Burger Classic</td>
-                      <td className="py-3 px-4">128</td>
-                      <td className="py-3 px-4">1,280€</td>
-                      <td className="py-3 px-4">4.8/5</td>
-                    </tr>
-                    <tr className="border-b hover:bg-muted/50">
-                      <td className="py-3 px-4">Frites Maison</td>
-                      <td className="py-3 px-4">95</td>
-                      <td className="py-3 px-4">380€</td>
-                      <td className="py-3 px-4">4.7/5</td>
-                    </tr>
-                    <tr className="border-b hover:bg-muted/50">
-                      <td className="py-3 px-4">Pizza Margherita</td>
-                      <td className="py-3 px-4">76</td>
-                      <td className="py-3 px-4">912€</td>
-                      <td className="py-3 px-4">4.5/5</td>
-                    </tr>
-                  </tbody>
-                </table>
+              <div className="h-80 flex items-center justify-center bg-muted/20 rounded-md">
+                <p className="text-muted-foreground">Graphique des ventes mensuelles</p>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="col-span-1">
+            <CardHeader>
+              <CardTitle>Produits Populaires</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {[
+                  { name: "Burger Classic", sales: 76, percentage: 24 },
+                  { name: "Frites Maison", sales: 62, percentage: 19 },
+                  { name: "Pizza Margherita", sales: 53, percentage: 16 },
+                  { name: "Salade César", sales: 41, percentage: 13 },
+                  { name: "Tiramisu", sales: 29, percentage: 9 },
+                ].map((product, i) => (
+                  <div key={i} className="flex items-center">
+                    <div className="w-full">
+                      <div className="flex justify-between mb-1">
+                        <span>{product.name}</span>
+                        <span className="font-medium">{product.sales} ventes</span>
+                      </div>
+                      <div className="w-full bg-muted h-2 rounded-full">
+                        <div
+                          className="bg-primary h-2 rounded-full"
+                          style={{ width: `${product.percentage}%` }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </CardContent>
           </Card>

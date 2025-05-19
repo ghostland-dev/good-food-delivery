@@ -1,207 +1,188 @@
 
 import React from 'react';
-import DriverHeader from '@/components/driver/DriverHeader';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell
-} from 'recharts';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-
-// Sample data for earnings charts
-const weeklyData = [
-  { day: 'Lun', earnings: 45 },
-  { day: 'Mar', earnings: 52 },
-  { day: 'Mer', earnings: 38 },
-  { day: 'Jeu', earnings: 61 },
-  { day: 'Ven', earnings: 78 },
-  { day: 'Sam', earnings: 87 },
-  { day: 'Dim', earnings: 65 },
-];
-
-const monthlyData = [
-  { week: 'Sem 1', earnings: 312 },
-  { week: 'Sem 2', earnings: 287 },
-  { week: 'Sem 3', earnings: 345 },
-  { week: 'Sem 4', earnings: 392 },
-];
-
-const earningsBreakdown = [
-  { name: 'Livraisons', value: 75 },
-  { name: 'Pourboires', value: 15 },
-  { name: 'Primes', value: 10 },
-];
-
-const COLORS = ['#fb923c', '#d97706', '#fdba74'];
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import DriverHeader from "@/components/driver/DriverHeader";
 
 const DriverEarnings = () => {
+  const currentWeekEarnings = [
+    { date: 'Lun', amount: 45.20 },
+    { date: 'Mar', amount: 38.50 },
+    { date: 'Mer', amount: 52.10 },
+    { date: 'Jeu', amount: 28.75 },
+    { date: 'Ven', amount: 63.90 },
+    { date: 'Sam', amount: 85.25 },
+    { date: 'Dim', amount: 76.60 }
+  ];
+  
+  const currentMonthEarnings = [
+    { week: 'Semaine 1', amount: 243.40 },
+    { week: 'Semaine 2', amount: 317.25 },
+    { week: 'Semaine 3', amount: 290.80 },
+    { week: 'Semaine 4', amount: 328.50 }
+  ];
+
+  const paymentHistory = [
+    { date: '10/05/2025', amount: 317.25, status: 'Payé' },
+    { date: '03/05/2025', amount: 243.40, status: 'Payé' },
+    { date: '26/04/2025', amount: 328.50, status: 'Payé' },
+    { date: '19/04/2025', amount: 290.80, status: 'Payé' },
+  ];
+
   return (
     <div className="min-h-screen bg-background">
       <DriverHeader />
-      
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-6">Mes revenus</h1>
+      <div className="container px-4 py-8">
+        <h1 className="text-3xl font-bold mb-6">Mes Revenus</h1>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-3 mb-6">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-base text-muted-foreground">Cette semaine</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">Revenus aujourd'hui</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold">426,00 €</p>
-              <p className="text-sm text-green-600">+8.2% par rapport à la semaine dernière</p>
+              <div className="text-2xl font-bold">€76.60</div>
+              <p className="text-xs text-muted-foreground mt-1">8 livraisons</p>
             </CardContent>
           </Card>
-          
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-base text-muted-foreground">Ce mois</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">Cette semaine</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold">1 336,00 €</p>
-              <p className="text-sm text-green-600">+12.5% par rapport au mois dernier</p>
+              <div className="text-2xl font-bold">€390.30</div>
+              <p className="text-xs text-muted-foreground mt-1">42 livraisons</p>
             </CardContent>
           </Card>
-          
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-base text-muted-foreground">Total des pourboires</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">Ce mois</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold">87,50 €</p>
-              <p className="text-sm text-muted-foreground">Ce mois</p>
+              <div className="text-2xl font-bold">€1,179.95</div>
+              <p className="text-xs text-muted-foreground mt-1">127 livraisons</p>
             </CardContent>
           </Card>
         </div>
         
-        <Tabs defaultValue="weekly" className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <TabsList>
-              <TabsTrigger value="weekly">Hebdomadaire</TabsTrigger>
-              <TabsTrigger value="monthly">Mensuel</TabsTrigger>
-            </TabsList>
-            
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm">Télécharger</Button>
-              <Button variant="outline" size="sm">Filtrer</Button>
-            </div>
-          </div>
+        <Tabs defaultValue="week" className="w-full">
+          <TabsList className="mb-6">
+            <TabsTrigger value="week">Cette Semaine</TabsTrigger>
+            <TabsTrigger value="month">Ce Mois</TabsTrigger>
+            <TabsTrigger value="history">Historique</TabsTrigger>
+          </TabsList>
           
-          <Card>
-            <TabsContent value="weekly" className="mt-0">
+          <TabsContent value="week">
+            <Card>
               <CardHeader>
-                <CardTitle>Revenus hebdomadaires</CardTitle>
+                <CardTitle>Revenus Hebdomadaires</CardTitle>
+                <CardDescription>Vos revenus pour la semaine du 13 mai au 19 mai 2025</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="h-80">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart
-                      data={weeklyData}
-                      margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                      <XAxis dataKey="day" />
-                      <YAxis />
-                      <Tooltip formatter={(value) => [`${value} €`, 'Revenus']} />
-                      <Line type="monotone" dataKey="earnings" stroke="#fb923c" strokeWidth={3} dot={{ r: 6 }} />
-                    </LineChart>
-                  </ResponsiveContainer>
+                <div className="h-72 flex items-end justify-between gap-2 pb-4 px-4">
+                  {currentWeekEarnings.map((day) => (
+                    <div key={day.date} className="flex flex-col items-center w-full">
+                      <div className="w-full bg-goodfood-300 rounded-t-md" style={{ height: `${day.amount * 1.5}px` }}></div>
+                      <p className="text-sm mt-2">{day.date}</p>
+                      <p className="text-xs font-medium">{day.amount.toFixed(2)}€</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex justify-between mt-6 pt-6 border-t border-border">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Total</p>
+                    <p className="text-lg font-bold">€390.30</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Livraisons</p>
+                    <p className="text-lg font-bold">42</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Moyenne</p>
+                    <p className="text-lg font-bold">€9.29 / livraison</p>
+                  </div>
                 </div>
               </CardContent>
-            </TabsContent>
-            
-            <TabsContent value="monthly" className="mt-0">
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="month">
+            <Card>
               <CardHeader>
-                <CardTitle>Revenus mensuels</CardTitle>
+                <CardTitle>Revenus Mensuels</CardTitle>
+                <CardDescription>Vos revenus pour le mois de mai 2025</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="h-80">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart
-                      data={monthlyData}
-                      margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                      <XAxis dataKey="week" />
-                      <YAxis />
-                      <Tooltip formatter={(value) => [`${value} €`, 'Revenus']} />
-                      <Line type="monotone" dataKey="earnings" stroke="#fb923c" strokeWidth={3} dot={{ r: 6 }} />
-                    </LineChart>
-                  </ResponsiveContainer>
+                <div className="h-60 flex items-end justify-between gap-8 pb-4 px-4">
+                  {currentMonthEarnings.map((week) => (
+                    <div key={week.week} className="flex flex-col items-center w-full">
+                      <div className="w-full bg-goodfood-300 rounded-t-md" style={{ height: `${week.amount / 2}px` }}></div>
+                      <p className="text-sm mt-2">{week.week}</p>
+                      <p className="text-xs font-medium">{week.amount.toFixed(2)}€</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex justify-between mt-6 pt-6 border-t border-border">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Total du mois</p>
+                    <p className="text-lg font-bold">€1,179.95</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Livraisons</p>
+                    <p className="text-lg font-bold">127</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Moyenne</p>
+                    <p className="text-lg font-bold">€9.29 / livraison</p>
+                  </div>
                 </div>
               </CardContent>
-            </TabsContent>
-          </Card>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="history">
+            <Card>
+              <CardHeader>
+                <CardTitle>Historique de paiements</CardTitle>
+                <CardDescription>Vos derniers paiements reçus</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="border rounded-md divide-y">
+                  {paymentHistory.map((payment, index) => (
+                    <div key={index} className="flex items-center justify-between p-4">
+                      <div>
+                        <p className="font-medium">Paiement hebdomadaire</p>
+                        <p className="text-sm text-muted-foreground">{payment.date}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-medium">€{payment.amount.toFixed(2)}</p>
+                        <p className="text-sm text-green-600">{payment.status}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <Button variant="outline" className="mt-4 w-full">
+                  Voir tout l'historique
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Répartition des revenus</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={earningsBreakdown}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="value"
-                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                    >
-                      {earningsBreakdown.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip formatter={(value) => [`${value}%`, '']} />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle>Historique des paiements</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {[
-                  { date: '15 Mai 2025', amount: '685,00 €', status: 'Payé' },
-                  { date: '1 Mai 2025', amount: '651,00 €', status: 'Payé' },
-                  { date: '15 Avril 2025', amount: '592,50 €', status: 'Payé' },
-                  { date: '1 Avril 2025', amount: '578,25 €', status: 'Payé' },
-                ].map((payment, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                    <div>
-                      <p className="font-medium">{payment.date}</p>
-                      <p className="text-sm text-muted-foreground">Virement bancaire</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-bold">{payment.amount}</p>
-                      <p className="text-sm text-green-600">{payment.status}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              
-              <Button variant="ghost" className="w-full mt-4">Voir tout l'historique</Button>
-            </CardContent>
-          </Card>
-        </div>
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle>Paramètres de paiement</CardTitle>
+            <CardDescription>Configurer vos informations de paiement</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="p-4 border rounded-md mb-4">
+              <p className="font-medium">Méthode de paiement actuelle</p>
+              <p className="text-sm text-muted-foreground">Virement bancaire sur le compte **** 6789</p>
+            </div>
+            <Button variant="outline">Modifier mes informations bancaires</Button>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
