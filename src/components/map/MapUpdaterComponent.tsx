@@ -10,7 +10,7 @@ const MapUpdaterComponent = ({ driverPosition }: MapUpdaterProps) => {
   const map = useMap();
   
   useEffect(() => {
-    if (driverPosition) {
+    if (driverPosition && map) {
       map.setView(driverPosition, map.getZoom(), {
         animate: true,
         duration: 1
