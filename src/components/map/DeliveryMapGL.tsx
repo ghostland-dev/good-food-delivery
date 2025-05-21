@@ -1,8 +1,10 @@
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { Card } from '@/components/ui/card';
+import { useMapInitialization } from '@/hooks/useMapInitialization';
+import MapRoute from './MapRoute';
+import { convertCoordinates } from '@/utils/mapUtils';
 
 // Types
 export interface Location {
@@ -26,7 +28,7 @@ interface DeliveryMapGLProps {
 }
 
 const DeliveryMapGL: React.FC<DeliveryMapGLProps> = ({
-  center = [2.3522, 48.8566], // Paris par défaut (longitude, latitude)
+  center = [2.3522, 48.8566], // Paris by default (longitude, latitude)
   zoom = 13,
   locations,
   routePath,
@@ -38,82 +40,30 @@ const DeliveryMapGL: React.FC<DeliveryMapGLProps> = ({
   followDriver = true,
 }) => {
   const mapContainer = useRef<HTMLDivElement | null>(null);
-  const map = useRef<maplibregl.Map | null>(null);
   const markersRef = useRef<maplibregl.Marker[]>([]);
-  const [mapLoaded, setMapLoaded] = useState(false);
   
-  // Convertir les coordonnées (lat, lng) en (lng, lat) pour MapLibre
-  const convertCoordinates = (coords: [number, number]): [number, number] => {
-    return [coords[1], coords[0]]; // MapLibre utilise [lng, lat]
-  };
+  // Use our custom hook to initialize the map
+  const { map, mapLoaded } = useMapInitialization({
+    container: mapContainer,
+    center,
+    zoom
+  });
 
-  // Initialisation de la carte
+  // Add markers for locations
   useEffect(() => {
-    if (!mapContainer.current) return;
-    
-    // Création de la carte OpenStreetMap avec MapLibre GL
-    map.current = new maplibregl.Map({
-      container: mapContainer.current,
-      style: {
-        version: 8,
-        sources: {
-          'osm': {
-            type: 'raster',
-            tiles: [
-              'https://a.tile.openstreetmap.org/{z}/{x}/{y}.png',
-              'https://b.tile.openstreetmap.org/{z}/{x}/{y}.png',
-              'https://c.tile.openstreetmap.org/{z}/{x}/{y}.png'
-            ],
-            tileSize: 256,
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          }
-        },
-        layers: [
-          {
-            id: 'osm-tiles',
-            type: 'raster',
-            source: 'osm',
-            minzoom: 0,
-            maxzoom: 19
-          }
-        ]
-      },
-      center: convertCoordinates(center),
-      zoom: zoom,
-    });
+    if (!map || !mapLoaded) return;
 
-    // Contrôles de navigation
-    map.current.addControl(new maplibregl.NavigationControl());
-
-    // Événement de chargement de la carte
-    map.current.on('load', () => {
-      setMapLoaded(true);
-    });
-
-    // Nettoyage
-    return () => {
-      markersRef.current.forEach(marker => marker.remove());
-      if (map.current) {
-        map.current.remove();
-      }
-    };
-  }, []);
-
-  // Ajouter les marqueurs
-  useEffect(() => {
-    if (!map.current || !mapLoaded) return;
-
-    // Supprimer les marqueurs existants
+    // Clear existing markers
     markersRef.current.forEach(marker => marker.remove());
     markersRef.current = [];
 
-    // Ajouter de nouveaux marqueurs pour chaque emplacement
+    // Add markers for each location
     locations.forEach(loc => {
-      // Créer un élément pour le marqueur personnalisé
+      // Create marker element
       const el = document.createElement('div');
       el.className = 'custom-marker';
       
-      // Appliquer un style en fonction du type
+      // Style based on type
       if (loc.type === 'restaurant') {
         el.innerHTML = `<div class="w-6 h-6 bg-green-500 border-2 border-white rounded-full flex items-center justify-center">
                           <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -135,35 +85,35 @@ const DeliveryMapGL: React.FC<DeliveryMapGLProps> = ({
                         </div>`;
       }
 
-      // Créer le popup avec les informations
+      // Create popup
       const popup = new maplibregl.Popup({ 
         offset: 25,
         closeButton: false,
         className: 'custom-popup'
       }).setHTML(`<h3 class="font-medium text-sm">${loc.name}</h3>${loc.description ? `<p class="text-xs text-gray-500">${loc.description}</p>` : ''}`);
       
-      // Créer le marqueur et l'ajouter à la carte
+      // Add marker to map
       const marker = new maplibregl.Marker({ element: el })
         .setLngLat(convertCoordinates(loc.position))
         .setPopup(popup)
-        .addTo(map.current!);
+        .addTo(map);
       
       markersRef.current.push(marker);
     });
-  }, [locations, mapLoaded]);
+  }, [locations, mapLoaded, map]);
 
-  // Ajouter le marqueur du livreur séparément
+  // Handle driver position separately
   useEffect(() => {
-    if (!map.current || !mapLoaded || !currentDriverPosition) return;
+    if (!map || !mapLoaded || !currentDriverPosition) return;
 
-    // Supprimer l'ancien marqueur du livreur s'il existe
+    // Remove existing driver marker
     const driverMarkerIndex = markersRef.current.findIndex(m => m.getElement().classList.contains('driver-marker'));
     if (driverMarkerIndex !== -1) {
       markersRef.current[driverMarkerIndex].remove();
       markersRef.current.splice(driverMarkerIndex, 1);
     }
 
-    // Créer un élément pour le marqueur du livreur
+    // Create driver marker element
     const el = document.createElement('div');
     el.className = 'custom-marker driver-marker';
     el.innerHTML = `<div class="w-8 h-8 bg-blue-500 border-2 border-white rounded-full flex items-center justify-center animate-pulse">
@@ -173,80 +123,36 @@ const DeliveryMapGL: React.FC<DeliveryMapGLProps> = ({
                       </svg>
                     </div>`;
 
-    // Créer le popup avec les informations
+    // Create popup
     const popup = new maplibregl.Popup({
       offset: 25,
       closeButton: false,
       className: 'custom-popup'
     }).setHTML(`<h3 class="font-medium text-sm">Votre livreur</h3><p class="text-xs text-gray-500">En cours de livraison</p>`);
 
-    // Créer le marqueur du livreur et l'ajouter à la carte
+    // Add driver marker
     const driverMarker = new maplibregl.Marker({ element: el })
       .setLngLat(convertCoordinates(currentDriverPosition))
       .setPopup(popup)
-      .addTo(map.current!);
+      .addTo(map);
 
     markersRef.current.push(driverMarker);
 
-    // Centrer la carte sur le livreur si followDriver est activé
+    // Center map on driver if followDriver is true
     if (followDriver) {
-      map.current.easeTo({
+      map.easeTo({
         center: convertCoordinates(currentDriverPosition),
         duration: 1000
       });
     }
-  }, [currentDriverPosition, followDriver, mapLoaded]);
-
-  // Dessiner l'itinéraire
-  useEffect(() => {
-    if (!map.current || !mapLoaded || !routePath || !showRoute || routePath.length < 2) return;
-
-    // Vérifier si la source existe déjà
-    if (map.current.getSource('route')) {
-      // Mettre à jour les données de l'itinéraire
-      const source = map.current.getSource('route') as maplibregl.GeoJSONSource;
-      source.setData({
-        type: 'Feature',
-        properties: {},
-        geometry: {
-          type: 'LineString',
-          coordinates: routePath.map(point => convertCoordinates(point))
-        }
-      });
-    } else {
-      // Ajouter une nouvelle source et une couche pour l'itinéraire
-      map.current.addSource('route', {
-        type: 'geojson',
-        data: {
-          type: 'Feature',
-          properties: {},
-          geometry: {
-            type: 'LineString',
-            coordinates: routePath.map(point => convertCoordinates(point))
-          }
-        }
-      });
-
-      map.current.addLayer({
-        id: 'route-line',
-        type: 'line',
-        source: 'route',
-        layout: {
-          'line-join': 'round',
-          'line-cap': 'round'
-        },
-        paint: {
-          'line-color': '#4287f5',
-          'line-width': 5,
-          'line-dasharray': [2, 2]
-        }
-      });
-    }
-  }, [routePath, showRoute, mapLoaded]);
+  }, [currentDriverPosition, followDriver, mapLoaded, map]);
 
   return (
     <div className={className} style={{ height }}>
       <div ref={mapContainer} className="w-full h-full rounded-lg" />
+      {map && mapLoaded && routePath && showRoute && (
+        <MapRoute map={map} routePath={routePath} isVisible={showRoute} />
+      )}
     </div>
   );
 };

@@ -9,4 +9,9 @@ declare module 'react-leaflet' {
   export const Popup: any;
   export const useMap: any;
   export const useMapEvents: any;
+  export interface MapContainerProps {
+    center: [number, number];
+    zoom: number;
+    [key: string]: any;
+  }
 }

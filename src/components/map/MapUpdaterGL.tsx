@@ -1,6 +1,7 @@
 
 import { useEffect } from "react";
 import type { Map } from "maplibre-gl";
+import { convertCoordinates } from "@/utils/mapUtils";
 
 interface MapUpdaterGLProps {
   map: Map | null;
@@ -13,8 +14,8 @@ const MapUpdaterGL = ({ map, driverPosition, followDriver = true, zoom }: MapUpd
   
   useEffect(() => {
     if (driverPosition && map && followDriver) {
-      // Convert (lat, lng) to (lng, lat) for MapLibre
-      const maplibreCoords: [number, number] = [driverPosition[1], driverPosition[0]];
+      // Convert to MapLibre format and update map position
+      const maplibreCoords = convertCoordinates(driverPosition);
       
       map.easeTo({
         center: maplibreCoords,
