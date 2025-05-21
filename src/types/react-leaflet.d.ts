@@ -1,17 +1,29 @@
 
-// This is a declaration file to satisfy TypeScript
-// We're not using react-leaflet but some types reference it
 declare module 'react-leaflet' {
-  // Provide empty definitions for any types that might be referenced
-  export const MapContainer: any;
-  export const TileLayer: any;
-  export const Marker: any;
-  export const Popup: any;
-  export const useMap: any;
-  export const useMapEvents: any;
-  export interface MapContainerProps {
-    center: [number, number];
+  import { Map as LeafletMap, LatLngBounds, LatLngExpression, MapOptions, PointExpression } from 'leaflet';
+  import * as React from 'react';
+
+  export interface MapContainerProps extends MapOptions {
+    center: LatLngExpression;
     zoom: number;
-    [key: string]: any;
+    children?: React.ReactNode;
+    style?: React.CSSProperties;
+    className?: string;
+    id?: string;
+    bounds?: LatLngBounds;
+    whenCreated?: (map: LeafletMap) => void;
+    whenReady?: () => void;
   }
+
+  export class MapContainer extends React.Component<MapContainerProps> {}
+  export class TileLayer extends React.Component<any> {}
+  export class Marker extends React.Component<any> {}
+  export class Popup extends React.Component<any> {}
+  export class Polyline extends React.Component<any> {}
+  export class Circle extends React.Component<any> {}
+  export class Rectangle extends React.Component<any> {}
+  export class Tooltip extends React.Component<any> {}
+  
+  export function useMap(): LeafletMap;
+  export function useMapEvents(map: LeafletMap, events: Record<string, (...args: any[]) => void>): LeafletMap;
 }
