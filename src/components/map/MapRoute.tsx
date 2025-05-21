@@ -1,17 +1,13 @@
 
 import React, { useEffect } from 'react';
 import maplibregl from 'maplibre-gl';
+import { convertCoordinates } from '@/utils/mapUtils';
 
 interface MapRouteProps {
   map: maplibregl.Map;
   routePath: [number, number][];
   isVisible: boolean;
 }
-
-// Convert coordinates from [lat, lng] to [lng, lat] for MapLibre
-const convertCoordinates = (coords: [number, number]): [number, number] => {
-  return [coords[1], coords[0]]; // MapLibre uses [lng, lat]
-};
 
 const MapRoute: React.FC<MapRouteProps> = ({ map, routePath, isVisible }) => {
   useEffect(() => {
@@ -33,26 +29,29 @@ const MapRoute: React.FC<MapRouteProps> = ({ map, routePath, isVisible }) => {
     function addOrUpdateRoute() {
       try {
         // Check if the source exists already in a safe way
-        let source;
+        let sourceExists = false;
         try {
-          source = map.getSource('route');
+          const source = map.getSource('route');
+          sourceExists = !!source;
         } catch (err) {
-          console.log("Source 'route' not found, will create new one", err);
-          source = null;
+          console.log("Source 'route' not found, will create new one");
+          sourceExists = false;
         }
 
-        if (source) {
+        if (sourceExists) {
           console.log("Updating existing route source");
           // Update the existing route data
-          const geoJsonSource = source as maplibregl.GeoJSONSource;
-          geoJsonSource.setData({
-            type: 'Feature',
-            properties: {},
-            geometry: {
-              type: 'LineString',
-              coordinates: routePath.map(point => convertCoordinates(point))
-            }
-          });
+          const geoJsonSource = map.getSource('route') as maplibregl.GeoJSONSource;
+          if (geoJsonSource && geoJsonSource.setData) {
+            geoJsonSource.setData({
+              type: 'Feature',
+              properties: {},
+              geometry: {
+                type: 'LineString',
+                coordinates: routePath.map(point => convertCoordinates(point))
+              }
+            });
+          }
         } else {
           console.log("Creating new route source and layer");
           // Add a new source and layer for the route
