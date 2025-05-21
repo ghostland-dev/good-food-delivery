@@ -1,7 +1,7 @@
 
 import React from "react";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
-import DeliveryMap from "@/components/map/DeliveryMap";
+import DeliveryMapGL from "@/components/map/DeliveryMapGL";
 
 interface ContactInfoProps {
   officeLocation: [number, number];
@@ -73,7 +73,7 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ officeLocation, mapLocations 
 
       {/* Map */}
       <div className="mt-8 rounded-xl overflow-hidden h-[300px]">
-        <DeliveryMap
+        <DeliveryMapGL
           center={officeLocation}
           zoom={14}
           locations={mapLocations}

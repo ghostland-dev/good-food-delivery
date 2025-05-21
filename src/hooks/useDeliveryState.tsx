@@ -1,6 +1,5 @@
 
 import { useState } from "react";
-import { LatLngExpression } from "leaflet";
 import { toast } from "@/components/ui/use-toast";
 
 // Constantes pour la démonstration
@@ -8,7 +7,7 @@ const RESTAURANT_LOCATION: [number, number] = [48.8738, 2.3596]; // Restaurant B
 const CLIENT_LOCATION: [number, number] = [48.8584, 2.2945]; // Client à Paris
 
 // Route de livraison simulée
-const DELIVERY_ROUTE: LatLngExpression[] = [
+const DELIVERY_ROUTE: [number, number][] = [
   RESTAURANT_LOCATION,
   [48.8689, 2.3423],
   [48.8656, 2.3212],
