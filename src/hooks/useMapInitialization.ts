@@ -21,6 +21,8 @@ export const useMapInitialization = ({
     if (!container.current) return;
     
     // Create the map
+    console.log("Initializing map with center:", center, "zoom:", zoom);
+    
     map.current = new maplibregl.Map({
       container: container.current,
       style: createBaseMapStyle(),
@@ -33,12 +35,20 @@ export const useMapInitialization = ({
 
     // Set map loaded when ready
     map.current.on('load', () => {
+      console.log("Map loaded event fired");
       setMapLoaded(true);
     });
+
+    // Check if map is already loaded (it might be if the style is cached)
+    if (map.current.loaded()) {
+      console.log("Map already loaded on initialization");
+      setMapLoaded(true);
+    }
 
     // Cleanup
     return () => {
       if (map.current) {
+        console.log("Cleaning up map");
         map.current.remove();
         map.current = null;
       }

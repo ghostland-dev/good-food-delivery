@@ -5,6 +5,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { useMapInitialization } from '@/hooks/useMapInitialization';
 import MapRoute from './MapRoute';
 import { convertCoordinates } from '@/utils/mapUtils';
+import MapUpdaterGL from './MapUpdaterGL';
 
 // Types
 export interface Location {
@@ -137,19 +138,18 @@ const DeliveryMapGL: React.FC<DeliveryMapGLProps> = ({
       .addTo(map);
 
     markersRef.current.push(driverMarker);
-
-    // Center map on driver if followDriver is true
-    if (followDriver) {
-      map.easeTo({
-        center: convertCoordinates(currentDriverPosition),
-        duration: 1000
-      });
-    }
-  }, [currentDriverPosition, followDriver, mapLoaded, map]);
+  }, [currentDriverPosition, mapLoaded, map]);
 
   return (
     <div className={className} style={{ height }}>
       <div ref={mapContainer} className="w-full h-full rounded-lg" />
+      {map && mapLoaded && currentDriverPosition && followDriver && (
+        <MapUpdaterGL 
+          map={map}
+          driverPosition={currentDriverPosition}
+          followDriver={followDriver}
+        />
+      )}
       {map && mapLoaded && routePath && showRoute && (
         <MapRoute map={map} routePath={routePath} isVisible={showRoute} />
       )}
