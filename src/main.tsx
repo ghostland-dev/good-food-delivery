@@ -3,8 +3,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
-import 'leaflet/dist/leaflet.css';
-import './styles/leaflet.css';
+import 'maplibre-gl/dist/maplibre-gl.css';
+import './styles/maplibre.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

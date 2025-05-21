@@ -1,8 +1,7 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import FranchiseSidebar from "@/components/franchise/FranchiseSidebar";
-import DeliveryMap from "@/components/map/DeliveryMap";
+import DeliveryMapGL from "@/components/map/DeliveryMapGL";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend, PieChart, Pie, Cell } from 'recharts';
 import { Button } from "@/components/ui/button";
 
@@ -153,7 +152,7 @@ const FranchiseAnalytics = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <DeliveryMap
+              <DeliveryMapGL
                 center={franchiseLocation}
                 zoom={13}
                 locations={deliveryLocations}

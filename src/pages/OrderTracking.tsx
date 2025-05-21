@@ -5,7 +5,6 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import DeliveryTracker from "@/components/driver/DeliveryTracker";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { LatLngExpression } from "leaflet";
 import { Check } from "lucide-react";
 
 interface OrderDetails {
@@ -34,7 +33,7 @@ const OrderTracking = () => {
   const clientLocation: [number, number] = [48.8566, 2.3522]; // Example coordinates
   
   // Sample delivery route
-  const deliveryRoute: LatLngExpression[] = [
+  const deliveryRoute: [number, number][] = [
     [48.8684, 2.3388], // Restaurant
     [48.8651, 2.3412],
     [48.8645, 2.3435],
@@ -91,10 +90,7 @@ const OrderTracking = () => {
     const moveDriver = () => {
       if (currentPointIndex < deliveryRoute.length - 1) {
         currentPointIndex++;
-        const point = deliveryRoute[currentPointIndex];
-        if (Array.isArray(point)) {
-          setDriverPosition([point[0], point[1]]);
-        }
+        setDriverPosition(deliveryRoute[currentPointIndex]);
       }
     };
     

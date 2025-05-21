@@ -1,13 +1,12 @@
 
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import DeliveryMap from "@/components/map/DeliveryMap";
-import { LatLngExpression } from "leaflet";
+import DeliveryMapGL from "@/components/map/DeliveryMapGL";
 
 interface DeliveryTrackerProps {
   restaurantLocation: [number, number];
   clientLocation: [number, number];
-  deliveryRoute: LatLngExpression[];
+  deliveryRoute: [number, number][];
   driverPosition: [number, number];
   onDriverPositionChange: (position: [number, number]) => void;
 }
@@ -25,7 +24,7 @@ function DeliveryTracker({
         <CardTitle>Suivi de trajet en temps réel</CardTitle>
       </CardHeader>
       <CardContent>
-        <DeliveryMap
+        <DeliveryMapGL
           center={[48.8566, 2.3522]} // Paris
           zoom={12}
           height="400px"
@@ -42,7 +41,12 @@ function DeliveryTracker({
           <div className="w-full bg-muted h-2 rounded-full mt-2">
             <div
               className="bg-primary h-2 rounded-full"
-              style={{ width: `${Math.min(100, (deliveryRoute.indexOf(driverPosition as any) / (deliveryRoute.length - 1)) * 100) || 10}%` }}
+              style={{ 
+                width: `${Math.min(100, (
+                  deliveryRoute.findIndex(pos => pos[0] === driverPosition[0] && pos[1] === driverPosition[1]) / 
+                  (deliveryRoute.length - 1)
+                ) * 100) || 10}%` 
+              }}
             />
           </div>
           <div className="flex justify-between mt-1">
