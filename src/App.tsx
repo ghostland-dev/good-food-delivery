@@ -25,6 +25,9 @@ import DriverOrders from "./pages/driver/DriverOrders";
 import DriverProfile from "./pages/driver/DriverProfile";
 import DriverEarnings from "./pages/driver/DriverEarnings";
 import Cart from "./pages/Cart";
+import OrderConfirmation from "./pages/OrderConfirmation";
+import OrderTracking from "./pages/OrderTracking";
+import UserProfile from "./pages/UserProfile";
 
 const queryClient = new QueryClient();
 
@@ -46,7 +49,10 @@ const App = () => (
           <Route path="/faq" element={<FAQ />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/account" element={<UserAccount />} />
+          <Route path="/profile" element={<UserProfile />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/order-confirmation/:id" element={<OrderConfirmation />} />
+          <Route path="/order-tracking/:id" element={<OrderTracking />} />
           
           {/* Franchise Routes */}
           <Route path="/franchise" element={<FranchiseHome />} />

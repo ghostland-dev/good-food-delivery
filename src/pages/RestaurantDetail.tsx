@@ -1,27 +1,21 @@
 
-import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Star, Clock, Truck, Info, Plus, Minus, ShoppingBag } from "lucide-react";
+import { Star, Clock, Truck, Info, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import CartSidebar from "@/components/cart/CartSidebar";
+import { useCart } from "@/hooks/useCart";
+import { v4 as uuidv4 } from "uuid";
 
-// Mock data for restaurant
-const restaurantData = {
-  id: 1,
-  name: "Le Burger Gourmand",
-  image: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?q=80&w=1200",
-  cuisineType: "Burgers • Américain",
-  rating: 4.8,
-  ratingsCount: 324,
-  deliveryTime: "20-30 min",
-  deliveryFee: "2,99€",
-  promoted: true,
-  description: "Les meilleurs burgers gourmets de la ville, préparés avec des ingrédients frais et locaux. Nos recettes originales sauront satisfaire tous les amateurs de burgers.",
-  address: "23 Rue de la Paix, 75001 Paris",
-  minimumOrder: 15,
+// Importer les données du restaurant depuis notre fichier de données
+import { restaurants } from "@/data/restaurantsData";
+
+// Mock data pour le menu du restaurant
+const restaurantMenuData = {
   categories: [
     {
       id: "populaires",
@@ -140,68 +134,113 @@ const restaurantData = {
   ],
 };
 
-interface CartItem {
-  id: number;
-  name: string;
-  price: number;
-  quantity: number;
-}
-
 const RestaurantDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState(restaurantData.categories[0].id);
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const [activeTab, setActiveTab] = useState(restaurantMenuData.categories[0].id);
+  const [restaurantData, setRestaurantData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  
+  const {
+    cart,
+    addToCart,
+    removeFromCart,
+    updateQuantity,
+    clearCart,
+    getCartTotal,
+  } = useCart();
 
-  const addToCart = (itemId: number, name: string, price: number) => {
-    setCart((prev) => {
-      const itemIndex = prev.findIndex((item) => item.id === itemId);
-      if (itemIndex > -1) {
-        const updatedCart = [...prev];
-        updatedCart[itemIndex].quantity += 1;
-        return updatedCart;
-      } else {
-        return [...prev, { id: itemId, name, price, quantity: 1 }];
-      }
-    });
+  useEffect(() => {
+    // Simuler un chargement des données
+    const timer = setTimeout(() => {
+      // Rechercher le restaurant dans notre tableau de données
+      const restaurantId = parseInt(id || "1");
+      const restaurant = restaurants.find(r => r.id === restaurantId) || restaurants[0];
+      
+      // Ajouter des champs supplémentaires pour cet exemple
+      setRestaurantData({
+        ...restaurant,
+        ratingsCount: 324,
+        description: "Les meilleurs burgers gourmets de la ville, préparés avec des ingrédients frais et locaux. Nos recettes originales sauront satisfaire tous les amateurs de burgers.",
+        address: "23 Rue de la Paix, 75001 Paris",
+        minimumOrder: 15,
+        categories: restaurantMenuData.categories
+      });
+      
+      setLoading(false);
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, [id]);
 
-    toast({
-      title: "Ajouté au panier",
-      description: "Article ajouté avec succès.",
-    });
-  };
+  const handleAddToCart = (item: any) => {
+    if (restaurantData) {
+      addToCart({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        restaurantId: restaurantData.id,
+        restaurantName: restaurantData.name
+      });
 
-  const decreaseQuantity = (itemId: number) => {
-    setCart((prev) => {
-      const itemIndex = prev.findIndex((item) => item.id === itemId);
-      if (itemIndex > -1) {
-        const updatedCart = [...prev];
-        if (updatedCart[itemIndex].quantity === 1) {
-          return prev.filter((item) => item.id !== itemId);
-        } else {
-          updatedCart[itemIndex].quantity -= 1;
-        }
-        return updatedCart;
-      }
-      return prev;
-    });
-  };
-
-  const getTotalItems = () => {
-    return cart.reduce((sum, item) => sum + item.quantity, 0);
-  };
-
-  const getTotalPrice = () => {
-    return cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+      toast({
+        title: "Ajouté au panier",
+        description: "Article ajouté avec succès.",
+      });
+    }
   };
 
   const handleCheckout = () => {
-    toast({
-      title: "Commande validée",
-      description: "Votre commande est en cours de préparation.",
-    });
-    setCart([]);
+    // Générer un ID de commande
+    const orderId = uuidv4().substring(0, 8);
+    
+    // Créer un objet de commande
+    const order = {
+      id: orderId,
+      restaurantName: restaurantData.name,
+      restaurantId: restaurantData.id,
+      items: cart.map(item => ({
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price
+      })),
+      totalPrice: getCartTotal(),
+      deliveryAddress: "24 Rue du Commerce, 75015 Paris", // Adresse par défaut pour cet exemple
+      estimatedDeliveryTime: restaurantData.deliveryTime,
+      status: "confirmed",
+      date: new Date().toISOString()
+    };
+    
+    // Sauvegarder la commande dans le localStorage
+    const savedOrders = localStorage.getItem("goodfood_orders");
+    const orders = savedOrders ? JSON.parse(savedOrders) : [];
+    orders.push(order);
+    localStorage.setItem("goodfood_orders", JSON.stringify(orders));
+    
+    // Vider le panier
+    clearCart();
+    
+    // Rediriger vers la page de confirmation
+    navigate(`/order-confirmation/${orderId}`);
   };
+
+  if (loading || !restaurantData) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="animate-pulse space-y-4 w-full max-w-md p-8">
+            <div className="h-8 bg-muted rounded w-3/4"></div>
+            <div className="h-64 bg-muted rounded w-full"></div>
+            <div className="h-4 bg-muted rounded w-1/2"></div>
+            <div className="h-4 bg-muted rounded w-2/3"></div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -258,7 +297,7 @@ const RestaurantDetail = () => {
               <Tabs value={activeTab} onValueChange={setActiveTab}>
                 <div className="overflow-x-auto pb-2">
                   <TabsList className="w-max mb-6">
-                    {restaurantData.categories.map((category) => (
+                    {restaurantData.categories.map((category: any) => (
                       <TabsTrigger key={category.id} value={category.id}>
                         {category.name}
                       </TabsTrigger>
@@ -266,12 +305,12 @@ const RestaurantDetail = () => {
                   </TabsList>
                 </div>
 
-                {restaurantData.categories.map((category) => (
+                {restaurantData.categories.map((category: any) => (
                   <TabsContent key={category.id} value={category.id}>
                     <div className="mb-6">
                       <h2 className="text-xl font-bold mb-4">{category.name}</h2>
                       <div className="space-y-4">
-                        {category.items.map((item) => (
+                        {category.items.map((item: any) => (
                           <div
                             key={item.id}
                             className="flex gap-4 p-4 border rounded-lg hover:shadow-md transition-shadow"
@@ -288,9 +327,7 @@ const RestaurantDetail = () => {
                                 <Button
                                   size="sm"
                                   className="bg-goodfood-500 hover:bg-goodfood-600"
-                                  onClick={() =>
-                                    addToCart(item.id, item.name, item.price)
-                                  }
+                                  onClick={() => handleAddToCart(item)}
                                 >
                                   <Plus className="h-4 w-4 mr-1" />
                                   Ajouter
@@ -314,90 +351,17 @@ const RestaurantDetail = () => {
             </div>
 
             <div className="w-full md:w-80 flex-shrink-0">
-              <div className="sticky top-20 bg-white border rounded-lg p-4">
-                <h3 className="font-bold text-lg flex items-center gap-2 mb-4">
-                  <ShoppingBag className="h-5 w-5" />
-                  Votre commande
-                </h3>
-
-                {cart.length === 0 ? (
-                  <div className="text-center py-6 text-gray-500">
-                    <p>Votre panier est vide</p>
-                    <p className="text-sm mt-2">
-                      Commande minimum: {restaurantData.minimumOrder} €
-                    </p>
-                  </div>
-                ) : (
-                  <>
-                    <div className="max-h-64 overflow-y-auto mb-4">
-                      {cart.map((item) => (
-                        <div
-                          key={item.id}
-                          className="flex justify-between items-center py-2 border-b last:border-b-0"
-                        >
-                          <div>
-                            <div className="font-medium">{item.name}</div>
-                            <div className="text-sm text-gray-500">
-                              {item.price.toFixed(2)} €
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              className="h-6 w-6"
-                              onClick={() => decreaseQuantity(item.id)}
-                            >
-                              <Minus className="h-3 w-3" />
-                            </Button>
-                            <span>{item.quantity}</span>
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              className="h-6 w-6"
-                              onClick={() =>
-                                addToCart(item.id, item.name, item.price)
-                              }
-                            >
-                              <Plus className="h-3 w-3" />
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="space-y-2 border-t pt-4">
-                      <div className="flex justify-between">
-                        <span>Sous-total</span>
-                        <span>{getTotalPrice().toFixed(2)} €</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Frais de livraison</span>
-                        <span>{restaurantData.deliveryFee}</span>
-                      </div>
-                      <div className="flex justify-between font-bold pt-2 border-t">
-                        <span>Total</span>
-                        <span>
-                          {(
-                            getTotalPrice() +
-                            parseFloat(restaurantData.deliveryFee.replace(",", "."))
-                          ).toFixed(2)}{" "}
-                          €
-                        </span>
-                      </div>
-                    </div>
-
-                    <Button
-                      className="w-full mt-4 bg-goodfood-500 hover:bg-goodfood-600"
-                      onClick={handleCheckout}
-                      disabled={getTotalPrice() < restaurantData.minimumOrder}
-                    >
-                      {getTotalPrice() < restaurantData.minimumOrder
-                        ? `Minimum ${restaurantData.minimumOrder} €`
-                        : `Passer la commande (${getTotalItems()})`}
-                    </Button>
-                  </>
-                )}
+              <div className="sticky top-20">
+                <CartSidebar
+                  cartItems={cart}
+                  restaurantName={restaurantData.name}
+                  minimumOrder={restaurantData.minimumOrder}
+                  deliveryFee={restaurantData.deliveryFee}
+                  onRemoveItem={removeFromCart}
+                  onUpdateQuantity={updateQuantity}
+                  onCheckout={handleCheckout}
+                  getTotal={getCartTotal}
+                />
               </div>
             </div>
           </div>
