@@ -1,8 +1,9 @@
 
 import { useEffect } from "react";
+import type { Map } from "maplibre-gl";
 
 interface MapUpdaterGLProps {
-  map: any;
+  map: Map | null;
   driverPosition: [number, number];
   followDriver?: boolean;
   zoom?: number;
