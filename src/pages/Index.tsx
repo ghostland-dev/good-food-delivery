@@ -27,7 +27,7 @@ const Index = () => {
   ];
 
   // Properly define the route path as an array of LatLngTuple
-  const routePath = [
+  const routePath: LatLngTuple[] = [
     [48.8566, 2.3522] as LatLngTuple,
     [48.8580, 2.3450] as LatLngTuple,
     [48.8595, 2.3420] as LatLngTuple,
