@@ -13,7 +13,7 @@ const MapUpdaterGL = ({ map, driverPosition, followDriver = true, zoom }: MapUpd
   
   useEffect(() => {
     if (driverPosition && map && followDriver) {
-      // Convertir (lat, lng) en (lng, lat) pour MapLibre
+      // Convert (lat, lng) to (lng, lat) for MapLibre
       const maplibreCoords: [number, number] = [driverPosition[1], driverPosition[0]];
       
       map.easeTo({

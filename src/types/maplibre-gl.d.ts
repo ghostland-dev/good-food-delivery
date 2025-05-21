@@ -1,8 +1,6 @@
 
 declare module 'maplibre-gl' {
-  export * from 'maplibre-gl';
-  
-  // Explicitly declare the Map type to avoid any reference to react-leaflet
+  // Using export = syntax to avoid namespace issues
   export class Map {
     constructor(options: MapOptions);
     addControl(control: any, position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left'): this;
