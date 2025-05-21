@@ -14,6 +14,7 @@ declare module 'maplibre-gl' {
     addSource(id: string, source: any): this;
     addLayer(layer: any): this;
     setFog(options: any): this;
+    scrollZoom: { disable(): void; enable(): void };
   }
 
   export class NavigationControl {
