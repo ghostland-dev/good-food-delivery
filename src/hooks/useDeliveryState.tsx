@@ -1,25 +1,25 @@
 
 import { useState } from "react";
-import { LatLngExpression, LatLngTuple } from "leaflet";
+import { LatLngExpression } from "leaflet";
 import { toast } from "@/components/ui/use-toast";
 
-// Constants for demonstration
-const RESTAURANT_LOCATION: LatLngTuple = [48.8738, 2.3596]; // Restaurant Burger House in Paris
-const CLIENT_LOCATION: LatLngTuple = [48.8584, 2.2945]; // Client in Paris
+// Constantes pour la démonstration
+const RESTAURANT_LOCATION: [number, number] = [48.8738, 2.3596]; // Restaurant Burger House à Paris
+const CLIENT_LOCATION: [number, number] = [48.8584, 2.2945]; // Client à Paris
 
-// Simulated delivery route
+// Route de livraison simulée
 const DELIVERY_ROUTE: LatLngExpression[] = [
   RESTAURANT_LOCATION,
-  [48.8689, 2.3423] as LatLngTuple,
-  [48.8656, 2.3212] as LatLngTuple,
-  [48.8619, 2.3079] as LatLngTuple,
+  [48.8689, 2.3423],
+  [48.8656, 2.3212],
+  [48.8619, 2.3079],
   CLIENT_LOCATION
 ];
 
 export const useDeliveryState = () => {
   const [isAvailable, setIsAvailable] = useState(true);
   const [hasCurrentDelivery, setHasCurrentDelivery] = useState(false);
-  const [driverPosition, setDriverPosition] = useState<LatLngExpression>(RESTAURANT_LOCATION);
+  const [driverPosition, setDriverPosition] = useState<[number, number]>(RESTAURANT_LOCATION);
   const [showMap, setShowMap] = useState(false);
   
   const toggleAvailability = () => {

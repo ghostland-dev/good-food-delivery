@@ -1,21 +1,22 @@
 
 import { useEffect } from "react";
 import { useMap } from "react-leaflet";
-import { LatLngExpression } from "leaflet";
 
 interface MapUpdaterProps {
-  driverPosition: LatLngExpression;
-  zoom?: number;
+  driverPosition: [number, number];
 }
 
-const MapUpdaterComponent = ({ driverPosition, zoom }: MapUpdaterProps) => {
+const MapUpdaterComponent = ({ driverPosition }: MapUpdaterProps) => {
   const map = useMap();
   
   useEffect(() => {
     if (driverPosition && map) {
-      map.setView(driverPosition, zoom || map.getZoom());
+      map.setView(driverPosition, map.getZoom(), {
+        animate: true,
+        duration: 1
+      });
     }
-  }, [driverPosition, zoom, map]);
+  }, [driverPosition, map]);
   
   return null;
 };

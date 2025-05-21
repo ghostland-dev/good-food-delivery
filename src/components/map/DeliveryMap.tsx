@@ -2,10 +2,11 @@
 import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import L, { LatLngExpression, LatLngTuple } from 'leaflet';
+import L from 'leaflet';
+import { LatLngExpression } from 'leaflet';
 import MapUpdaterComponent from './MapUpdaterComponent';
 
-// Fix Leaflet icon issues in React
+// Correction des icônes Leaflet qui ne se chargent pas correctement dans React
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
@@ -13,7 +14,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
 });
 
-// Custom icons
+// Icônes personnalisées
 const restaurantIcon = new L.Icon({
   iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -43,25 +44,25 @@ const driverIcon = new L.Icon({
 
 export interface Location {
   name: string;
-  position: LatLngExpression;
+  position: [number, number];
   type: 'restaurant' | 'client' | 'driver';
   description?: string;
 }
 
 interface DeliveryMapProps {
-  center?: LatLngExpression;
+  center?: [number, number];
   zoom?: number;
   locations: Location[];
   routePath?: LatLngExpression[];
   className?: string;
   height?: string;
   showRoute?: boolean;
-  currentDriverPosition?: LatLngExpression;
+  currentDriverPosition?: [number, number];
   onDriverPositionChange?: (position: [number, number]) => void;
 }
 
 function DeliveryMap({
-  center = [48.8566, 2.3522] as LatLngTuple, // Paris by default
+  center = [48.8566, 2.3522], // Paris par défaut
   zoom = 13,
   locations,
   routePath,
@@ -71,8 +72,8 @@ function DeliveryMap({
   currentDriverPosition,
   onDriverPositionChange
 }: DeliveryMapProps) {
-  const [driverPosition, setDriverPosition] = useState<LatLngExpression>(
-    currentDriverPosition || ([48.8566, 2.3522] as LatLngTuple)
+  const [driverPosition, setDriverPosition] = useState<[number, number]>(
+    currentDriverPosition || [48.8566, 2.3522]
   );
 
   useEffect(() => {
@@ -82,27 +83,17 @@ function DeliveryMap({
   }, [currentDriverPosition]);
 
   useEffect(() => {
-    // Simulation of movement for the driver
+    // Simulation de mouvement pour le livreur (en situation réelle, ceci serait mis à jour par GPS)
     if (routePath && routePath.length >= 2 && !currentDriverPosition) {
       const simulateMovement = () => {
-        // Simulate movement along the route
+        // On simule un déplacement le long de la route
         const randomPoint = Math.floor(Math.random() * (routePath.length - 1));
-        const point = routePath[randomPoint];
+        const point = routePath[randomPoint] as [number, number];
         
-        // Handle both tuple and object formats for LatLngExpression
-        let position: [number, number];
-        if (Array.isArray(point)) {
-          position = [point[0], point[1]];
-        } else if (typeof point === 'object' && 'lat' in point && 'lng' in point) {
-          position = [point.lat, point.lng];
-        } else {
-          position = [48.8566, 2.3522]; // Default to Paris if invalid
-        }
-        
-        setDriverPosition(position);
+        setDriverPosition(point);
         
         if (onDriverPositionChange) {
-          onDriverPositionChange(position);
+          onDriverPositionChange(point);
         }
       };
 
@@ -111,7 +102,7 @@ function DeliveryMap({
     }
   }, [routePath, onDriverPositionChange, currentDriverPosition]);
 
-  // Choose icon based on location type
+  // Choix de l'icône en fonction du type de location
   const getIcon = (type: Location['type']) => {
     switch (type) {
       case 'restaurant':
@@ -152,16 +143,16 @@ function DeliveryMap({
           </Marker>
         ))}
         
-        {/* Driver position marker */}
+        {/* Marqueur pour la position du livreur */}
         <Marker position={driverPosition} icon={driverIcon}>
           <Popup>
-            <strong>Your position</strong>
+            <strong>Votre position</strong>
             <br />
-            In delivery
+            En cours de livraison
           </Popup>
         </Marker>
         
-        {/* Polyline to display delivery path */}
+        {/* Polyline pour afficher le chemin de livraison */}
         {showRoute && routePath && routePath.length > 1 && (
           <Polyline 
             positions={routePath} 
@@ -172,8 +163,7 @@ function DeliveryMap({
           />
         )}
         
-        {/* Map updater for smooth position changes */}
-        <MapUpdaterComponent driverPosition={driverPosition} zoom={zoom} />
+        <MapUpdaterComponent driverPosition={driverPosition} />
       </MapContainer>
     </div>
   );
